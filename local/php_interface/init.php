@@ -5,7 +5,7 @@ use Bitrix\Iblock\IblockTable;
 use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\Page\Asset;
 
-//\Bitrix\Main\UI\Extension::load('cab_log_events.common'); // вывод js событий
+\Bitrix\Main\UI\Extension::load('cab_log_events.common'); // вывод js событий
 \Bitrix\Main\UI\Extension::load('cav_js_extention.lesson20'); // вывод js событий
 
 
