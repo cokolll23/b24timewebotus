@@ -2,7 +2,7 @@ BX.namespace('Cav_js_extention.Lesson20');
 
 BX.Cav_js_extention.Lesson20 = {
     showMessage: function (message = '') {
-        // alert('ok');
+        // alert(message);
     },
     onStartWorkingDateAction: function (popupNodeId) {
         const objTimemanMain = BX('timeman_main');
