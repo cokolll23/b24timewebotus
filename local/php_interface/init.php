@@ -29,9 +29,11 @@ $eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealAdd",'OnAfterCrmD
 
 // для создания кастомных свойств
 $eventManager->addEventHandler('iblock', 'OnIBlockPropertyBuildList', ['UserTypes\SignUpForProcedure', 'GetUserTypeDescription']);
-//$eventManager->addEventHandler('iblock', 'OnIBlockPropertyBuildList', ['EventsClasses\ProceduresDateTimeBron', 'GetUserTypeDescription']);
+$eventManager->addEventHandler('iblock', 'OnIBlockPropertyBuildList', ['UserTypes\SelectDeal', 'GetUserTypeDescription']);
+
 
 $eventManager->addEventHandler("iblock", "OnAfterIBlockElementAdd", 'OnAfterIBlockElementAddHandler');
+
 $eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", 'OnAfterIBlockElementUpdateHandler');
 $eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealUpdate", 'OnAfterCrmDealUpdateHandler');
 
