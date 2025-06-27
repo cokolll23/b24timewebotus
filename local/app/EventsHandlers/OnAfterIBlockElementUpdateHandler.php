@@ -31,28 +31,29 @@ class OnAfterIBlockElementUpdateHandler
 
         }
         $iblockCodeOpt = 'deals';
-        if ($iblockCode == $iblockCodeOpt){
+        if ($iblockCode == $iblockCodeOpt) {
 
             Loader::includeModule('crm');
-            Debug::dumpToFile($arFields, 'OnAfterIBlockElementUpdateHandler', 'arFields.log');
-           // Bitrix\Main\Diag\Debug::writeToFile(переменная/массив, 'название в выводе', 'test.log');
+            // Debug::dumpToFile($arFields, 'OnAfterIBlockElementUpdateHandler', 'arFields.log');
+            // Bitrix\Main\Diag\Debug::writeToFile(переменная/массив, 'название в выводе', 'test.log');
 
             // свойства иб
             $dealId = $arFields["PROPERTY_VALUES"][70]["31:70"]["VALUE"]; // ID сделки, которую нужно изменить
             $dealOtvetstvenniy = $arFields["PROPERTY_VALUES"][72]["31:72"]["VALUE"]; // Ответственный ID сделки, которую нужно изменить
             $dealSumma = $arFields["PROPERTY_VALUES"][71]["31:71"]["VALUE"]; // Сумма ID сделки, которую нужно изменить
 
-            Bitrix\Main\Diag\Debug::writeToFile($dealId .'-- '.$dealOtvetstvenniy, '$dealId', 'var.log');
-           // поля коды сделки
-           /* $fieldAssignedById = "ASSIGNED_BY_ID"; // Ответственный
-            $fieldSummaById = "OPPORTUNITY"; // Сумма*/
+            Bitrix\Main\Diag\Debug::writeToFile($dealId . '-- ' . $dealOtvetstvenniy, '$dealId', 'var.log');
+            // поля коды сделки
+            /* $fieldAssignedById = "ASSIGNED_BY_ID"; // Ответственный
+             $fieldSummaById = "OPPORTUNITY"; // Сумма*/
 
-            OnAfterIBlockElementUpdateHandler::updateDeal($dealId,$dealOtvetstvenniy,$dealSumma);
+            OnAfterIBlockElementUpdateHandler::updateDeal($dealId, $dealOtvetstvenniy, $dealSumma);
 
         }
     }
 
-    public static function updateDeal($dealId,$AssignedById,$OPPORTUNITY) {
+    public static function updateDeal($dealId, $AssignedById, $OPPORTUNITY)
+    {
 
         $factory = Container::getInstance()->getFactory(\CCrmOwnerType::Deal);
         $item = $factory->getItem((int)$dealId);

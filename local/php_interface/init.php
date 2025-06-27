@@ -31,7 +31,7 @@ $eventManager->addEventHandler('iblock', 'OnIBlockPropertyBuildList', ['UserType
 $eventManager->addEventHandler('iblock', 'OnIBlockPropertyBuildList', ['UserTypes\SelectDeal', 'GetUserTypeDescription']);
 
 
-$eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate",['EventsHandlers\OnAfterIBlockElementUpdateHandler' ,'OnAfterIBlockElementUpdateHandler']);
+$eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", ['EventsHandlers\OnAfterIBlockElementUpdateHandler', 'OnAfterIBlockElementUpdateHandler']);
 $eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealUpdate", [ 'EventsHandlers\OnAfterCrmDealUpdateHandler', 'OnAfterCrmDealUpdateHandler']);
 
 

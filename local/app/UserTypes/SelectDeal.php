@@ -71,20 +71,20 @@ class SelectDeal
 
     public static function GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName)
     {
-        $deals=static ::getOptionsCrmDealsHtml();
+        $deals = static::getOptionsCrmDealsHtml();
         $options = '';
-       // $bWasSelect = false;
+        // $bWasSelect = false;
         foreach ($deals as $deal) {
             /*$options .= '<option value="'.htmlspecialchars($deal['ID']).'">' . htmlspecialchars($deal['TITLE']) . '</option>';*/
             $options .= '<option value="' . $deal["ID"] . '"';
             if (in_array($deal["ID"], $value)) {
                 $options .= ' selected';
-              // $bWasSelect = true;
+                // $bWasSelect = true;
             }
-            $options .= '>' . htmlspecialchars($deal['TITLE'])  . '</option>';
+            $options .= '>' . htmlspecialchars($deal['TITLE']) . '</option>';
         }
 
-        $html = '<select name="' . $strHTMLControlName["VALUE"].'">';
+        $html = '<select name="' . $strHTMLControlName["VALUE"] . '">';
 
         $arProperty['IS_REQUIRED'] ??= 'N';
         if ($arProperty['IS_REQUIRED'] !== 'Y') {
@@ -106,7 +106,7 @@ class SelectDeal
     {
         $strID = preg_replace('/[^a-zA-Z0-9_]/i', 'x', $strHTMLControlName["VALUE"]);
         $value = htmlspecialcharsbx(trim($arValue['VALUE']));
-        $deals=static ::getOptionsCrmDealsHtml();
+        $deals = static::getOptionsCrmDealsHtml();
         $options = '';
         // $bWasSelect = false;
         foreach ($deals as $deal) {
@@ -116,11 +116,9 @@ class SelectDeal
                 $options .= ' selected';
                 // $bWasSelect = true;
             }
-            $options .= '>' . htmlspecialchars($deal['TITLE'])  . '</option>';
+            $options .= '>' . htmlspecialchars($deal['TITLE']) . '</option>';
         }
-
-        $html = '<select name="' . $strHTMLControlName["VALUE"].'">';
-
+        $html = '<select name="' . $strHTMLControlName["VALUE"] . '">';
         $arProperty['IS_REQUIRED'] ??= 'N';
         if ($arProperty['IS_REQUIRED'] !== 'Y') {
             $html .= '<option value="">' . "(не установлено)" . '</option>';
@@ -131,7 +129,8 @@ class SelectDeal
         return $html;
     }
 
-    public static function getOptionsCrmDealsHtml() {
+    public static function getOptionsCrmDealsHtml()
+    {
 
         if (!Loader::includeModule('crm')) {
             return 'Модуль CRM не загружен.';
