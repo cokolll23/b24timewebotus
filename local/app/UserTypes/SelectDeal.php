@@ -118,6 +118,7 @@ class SelectDeal
             }
             $options .= '>' . htmlspecialchars($deal['TITLE']) . '</option>';
         }
+
         $html = '<select name="' . $strHTMLControlName["VALUE"] . '">';
         $arProperty['IS_REQUIRED'] ??= 'N';
         if ($arProperty['IS_REQUIRED'] !== 'Y') {
