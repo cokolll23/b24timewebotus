@@ -13,7 +13,7 @@ class OnAfterCrmDealUpdateHandler
     {
         Loader::includeModule('iblock');
 
-        Debug::dumpToFile($arFields, '$arFields', 'arFields.log');
+        Debug::dumpToFile($arFields, 'CrmDealUpdateHandler', 'arFields.log');
 
         $dealId = (string)$arFields ["ID"];
         $dealASSIGNEDId = $arFields["ASSIGNED_BY_ID"]; // Ответственный в сделке и CRM

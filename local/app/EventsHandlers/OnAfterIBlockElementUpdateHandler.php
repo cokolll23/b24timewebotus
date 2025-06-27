@@ -34,7 +34,7 @@ class OnAfterIBlockElementUpdateHandler
         if ($iblockCode == $iblockCodeOpt){
 
             Loader::includeModule('crm');
-            Debug::dumpToFile($arFields, '$arFields', 'arFields.log');
+            Debug::dumpToFile($arFields, 'OnAfterIBlockElementUpdateHandler', 'arFields.log');
            // Bitrix\Main\Diag\Debug::writeToFile(переменная/массив, 'название в выводе', 'test.log');
 
             // свойства иб
@@ -42,9 +42,10 @@ class OnAfterIBlockElementUpdateHandler
             $dealOtvetstvenniy = $arFields["PROPERTY_VALUES"][72]["31:72"]["VALUE"]; // Ответственный ID сделки, которую нужно изменить
             $dealSumma = $arFields["PROPERTY_VALUES"][71]["31:71"]["VALUE"]; // Сумма ID сделки, которую нужно изменить
 
+            Bitrix\Main\Diag\Debug::writeToFile($dealId .'-- '.$dealOtvetstvenniy, '$dealId', 'var.log');
            // поля коды сделки
-            $fieldAssignedById = "ASSIGNED_BY_ID"; // Ответственный
-            $fieldSummaById = "OPPORTUNITY"; // Сумма
+           /* $fieldAssignedById = "ASSIGNED_BY_ID"; // Ответственный
+            $fieldSummaById = "OPPORTUNITY"; // Сумма*/
 
             OnAfterIBlockElementUpdateHandler::updateDeal($dealId,$dealOtvetstvenniy,$dealSumma);
 
