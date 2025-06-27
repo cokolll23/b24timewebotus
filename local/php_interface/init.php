@@ -1,5 +1,4 @@
 <?php
-
 use Bitrix\Main\Loader;
 use Bitrix\Iblock\IblockTable;
 use Bitrix\Main\Diag\Debug;
@@ -32,72 +31,11 @@ $eventManager->addEventHandler('iblock', 'OnIBlockPropertyBuildList', ['UserType
 $eventManager->addEventHandler('iblock', 'OnIBlockPropertyBuildList', ['UserTypes\SelectDeal', 'GetUserTypeDescription']);
 
 
-$eventManager->addEventHandler("iblock", "OnAfterIBlockElementAdd", 'OnAfterIBlockElementAddHandler');
-
-$eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", 'OnAfterIBlockElementUpdateHandler');
-$eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealUpdate", 'OnAfterCrmDealUpdateHandler');
+$eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate",['EventsHandlers\OnAfterIBlockElementUpdateHandler' ,'OnAfterIBlockElementUpdateHandler']);
+$eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealUpdate", [ 'EventsHandlers\OnAfterCrmDealUpdateHandler', 'OnAfterCrmDealUpdateHandler']);
 
 
-function getIblockCodeHandler($arFieldsIblockID)
-{
-    $result = IblockTable::getList(array(
-        'filter' => ['ID' => $arFieldsIblockID],
-        'select' => ['CODE']
-    ));
-    if ($iblock = $result->fetch()) {
-        $iblockCode = $iblock['CODE'];
-    }
-    return $iblockCode;
-}
 
 
-function OnAfterIBlockElementAddHandler(&$arFields)
-{
-    // dump($arFields);
-    // die();
-    if (Loader::includeModule('iblock') && Loader::includeModule('crm')) {
-        $arFieldsIblockID = $arFields['IBLOCK_ID'];
-        $iblockCode = getIblockCodeHandler($arFieldsIblockID);
-        $iblockCodeOpt = 'request';
-        if ($iblockCode && $iblockCode == $iblockCodeOpt) {
-            $dealFactory = \Bitrix\Crm\Service\Container::getInstance()->getFactory(CCrmOwnerType::Deal);
-            $newDealItem = $dealFactory->createItem();
-            $newDealItem->set('TITLE', $arFields['NAME']);
-            $newDealItem->set('OPPORTUNITY', $arFields["PROPERTY_VALUES"][67]['n0']["VALUE"]);
-            $dealAddOperation = $dealFactory->getAddOperation($newDealItem);
-            $addResult = $dealAddOperation->launch();
-
-        }
 
 
-    } else {
-        echo "Модуль инфоблоков не подключен.";
-
-    }
-
-    if ($iblockCode == $iblockCodeOpt) {
-
-        /*
-
-
-        NAME=>ЭКГ
-                "PROPERTY_VALUES" => array:2 [▼
-            68 => array:1 [▼
-              "n0" => array:1 [▼
-                "VALUE" => "Иванов"
-              ]
-            ]
-            67 => array:1 [▼
-              "n0" => array:1 [▼
-                "VALUE" => "12000" OPPORTUNITY
-              ]
-            ]
-          ]*/
-
-    }
-}
-
-function OnAfterIBlockElementUpdateHandler(&$arFields)
-{
-
-}
