@@ -49,14 +49,19 @@ class OnAfterIBlockElementUpdateHandler
             // Debug::writeToFile(переменная/массив, 'название в выводе', 'test.log');
 
             // свойства иб
-            $dealId = $arFields["PROPERTY_VALUES"][70]["31:70"]["VALUE"]; // ID сделки, которую нужно изменить
-            $dealOtvetstvenniy = $arFields["PROPERTY_VALUES"][72]["31:72"]["VALUE"]; // Ответственный ID сделки, которую нужно изменить
-            $dealSumma = $arFields["PROPERTY_VALUES"][71]["31:71"]["VALUE"]; // Сумма ID сделки, которую нужно изменить
+            if (is_array($arFields["PROPERTY_VALUES"][70]["31:70"])) {
+                $dealId = $arFields["PROPERTY_VALUES"][70]["31:70"]["VALUE"]; // ID сделки, которую нужно изменить
+            }
+            //if (is_array($arFields["PROPERTY_VALUES"][72])) {
+                $dealOtvetstvenniy = $arFields["PROPERTY_VALUES"][72];
+           // }
+            // Ответственный ID сделки, которую нужно изменить
+            if (is_array($arFields["PROPERTY_VALUES"][71]["31:71"])) {
+                $dealSumma = $arFields["PROPERTY_VALUES"][71]["31:71"]["VALUE"]; // Сумма ID сделки, которую нужно изменить
+            }
+            $dealId = (int)$dealId;
 
-
-            // поля коды сделки
-            /* $fieldAssignedById = "ASSIGNED_BY_ID"; // Ответственный
-             $fieldSummaById = "OPPORTUNITY"; // Сумма*/
+            $dealSumma = (string)$dealSumma;
 
             OnAfterIBlockElementUpdateHandler::updateDeal($dealId, $dealOtvetstvenniy, $dealSumma);
 
@@ -66,12 +71,36 @@ class OnAfterIBlockElementUpdateHandler
 
     public static function updateDeal($dealId, $AssignedById, $OPPORTUNITY)
     {
+        $arrCurrDealVal = static::getCurrDeal($dealId);
 
         $factory = Container::getInstance()->getFactory(\CCrmOwnerType::Deal);
         $item = $factory->getItem((int)$dealId);
-        $item->set("ASSIGNED_BY_ID", $AssignedById);
-        $item->set("OPPORTUNITY", $OPPORTUNITY);
+
+        if ($AssignedById!=''){
+            $item->set("ASSIGNED_BY_ID", $AssignedById);
+        }else{
+            $item->set("ASSIGNED_BY_ID", $arrCurrDealVal['AssignedById']);
+        }
+        if ($OPPORTUNITY!=''){
+            $item->set("OPPORTUNITY", $OPPORTUNITY);
+        }else{
+            $item->set("OPPORTUNITY", $arrCurrDealVal['OPPORTUNITY']);
+        }
+
         $item->save();
+    }
+
+    public static function getCurrDeal($dealId)
+    {
+        $getCurrDealRes = [];
+
+        $factory = Container::getInstance()->getFactory(\CCrmOwnerType::Deal);
+        $getCurrDealRes['dealId'] = $item = $factory->getItem((int)$dealId);
+        $getCurrDealRes['AssignedById'] = $item->getAssignedById();
+        $getCurrDealRes['OPPORTUNITY'] = $item->get("OPPORTUNITY");
+
+        return $getCurrDealRes;
+
     }
 
 }

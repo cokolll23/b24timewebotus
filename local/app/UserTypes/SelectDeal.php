@@ -65,6 +65,7 @@ class SelectDeal
             'DESCRIPTION' => "Привязка к сделкам в виде списка",
             'GetPropertyFieldHtml' => [__CLASS__, 'GetPropertyFieldHtml'],
             'GetPublicEditHtml' => [__CLASS__, 'GetPublicEditHtml'],
+           // 'GetPublicViewHTML' => [__CLASS__, 'GetPublicViewHTML'],
 
         ];
     }
@@ -79,7 +80,6 @@ class SelectDeal
             $options .= '<option value="' . $deal["ID"] . '"';
             if (in_array($deal["ID"], $value)) {
                 $options .= ' selected';
-                // $bWasSelect = true;
             }
             $options .= '>' . htmlspecialchars($deal['TITLE']) . '</option>';
         }
@@ -94,6 +94,8 @@ class SelectDeal
         $html .= '</select>';
         return $html;
     }
+
+
 
     /**
      * Returns custom field for list and edit pages in public area.
@@ -151,5 +153,7 @@ class SelectDeal
         }
         return $deals;
     }
+
+
 }
 
