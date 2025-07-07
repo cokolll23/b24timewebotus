@@ -92,6 +92,7 @@ class SelectDeal
         }
         $html .= $options;
         $html .= '</select>';
+
         return $html;
     }
 
@@ -118,7 +119,7 @@ class SelectDeal
                 $options .= ' selected';
                 // $bWasSelect = true;
             }
-            $options .= '>' . htmlspecialchars($deal['TITLE']) . '</option>';
+            $options .= '>' . htmlspecialchars($deal['TITLE']).'('.$deal["ID"].')' . '</option>';
         }
 
         $html = '<select name="' . $strHTMLControlName["VALUE"] . '">';
@@ -128,6 +129,7 @@ class SelectDeal
         }
         $html .= $options;
         $html .= '</select>';
+        $html .= self::getJsScript();
 
         return $html;
     }
@@ -154,6 +156,19 @@ class SelectDeal
         return $deals;
     }
 
+    public static function getJsScript()
+    {
+        $strJsScript = '
+        <script>
+        BX.ready(function() {
+          alert("ok");
+        });
+        </script>
+        ';
+
+        return $strJsScript;
+
+    }
 
 }
 

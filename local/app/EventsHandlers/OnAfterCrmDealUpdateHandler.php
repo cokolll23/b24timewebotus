@@ -5,71 +5,47 @@ namespace EventsHandlers;
 use Bitrix\Main\Loader;
 use Bitrix\Iblock\IblockTable;
 use Bitrix\Main\Diag\Debug;
-use Bitrix\Iblock\ElementTable;
+use Bitrix\Crm\Entity\Deal;
+use \Bitrix\Crm\Service\Container;
+use Bitrix\Crm;
 
-class OnAfterCrmDealUpdateHandler
+class OnAfterIBlockElementUpdateHandler
 {
-    public static function OnAfterCrmDealUpdateHandler(&$arFields)
+
+
+    /**
+     * @param   &$arFields
+     * @return void
+     */
+    public static function OnAfterIBlockElementUpdateHandler(&$arFields)
     {
-        Loader::includeModule('iblock');
-        Debug::dumpToFile($arFields, 'CrmDealUpdateHandler', 'arFields.log');
+        if ( Loader::includeModule('crm')) {
+            $arFieldsIblockID = $arFields['IBLOCK_ID'];
+            $iblockCode = getIblockCodeHandler($arFieldsIblockID);
+            $iblockCodeOpt = 'request';
 
-        $dealId = (string)$arFields ["ID"];
-        $dealASSIGNEDId = $arFields["ASSIGNED_BY_ID"]; // Ответственный в сделке и CRM
-        $dealSumm = (string)$arFields["OPPORTUNITY"]; // Сумма в сделке и CRM
+            if ($iblockCode && $iblockCode == $iblockCodeOpt) {
 
-        OnAfterCrmDealUpdateHandler::updateIblockElById($dealId, $dealASSIGNEDId, $dealSumm);
+                $dealId = (int)$arFields["PROPERTY_VALUES"][70]["70:70"]["VALUE"];
 
-    }
-
-    public static function updateIblockElById($dealId, $dealASSIGNEDId, $dealSumm)
-    {
-        $elId = OnAfterCrmDealUpdateHandler::getIblockElId(16, $dealId);
-
-        if ($elId) {
-            $el = new \CIBlockElement;
-            $PROP = array();
-            $PROP[70] = $dealId; // Сделка в иб
-            $PROP[71] = $dealSumm;// Сумма
-            $PROP[72] = $dealASSIGNEDId;// Ответственный
-
-            $arLoadProductArray = array(
-                //"MODIFIED_BY" => $USER->GetID(), // элемент изменен текущим пользователем
-                "IBLOCK_SECTION" => false,          // элемент лежит в корне раздела
-                "PROPERTY_VALUES" => $PROP,
-                "NAME" => "Элемент",
-                "ACTIVE" => "Y",            // активен
-
-            );
-            $res = $el->Update($elId, $arLoadProductArray);
+                $strDealSumma =$arFields["PROPERTY_VALUES"][71]["70:71"]["VALUE"];// Сумма
 
 
-        } else {
-            echo "Элемент не найден.";
+                $dealFactory = Container::getInstance()->getFactory(\CCrmOwnerType::Deal);
+                $newDealItem = $dealFactory->getItem($dealId);
+
+                Debug::dumpToFile($arFields, '$arFields ' . date('d-m-Y; H:i:s'));
+                //Debug::dumpToFile($strDealSumma, '$strDealSumma ' . date('d-m-Y; H:i:s'));
+
+
+                if (is_array($arFields["PROPERTY_VALUES"][71]["70:71"])) { // Сумма сделки
+                    $newDealItem->set('OPPORTUNITY', (int)$arFields["PROPERTY_VALUES"][71]["70:71"]["VALUE"]);
+                }
+                $newDealItem->set("ASSIGNED_BY_ID", $arFields["PROPERTY_VALUES"][72]["70:72"]["VALUE"]);// ответственный
+                $dealUpdateOperation = $dealFactory->getUpdateOperation($newDealItem);
+                $addResult = $dealUpdateOperation->launch();
+            }
         }
-
     }
 
-    public static function getIblockElId($iblockId, $propertyValue)
-    {
-        $arFilter = array(
-            "IBLOCK_ID" => $iblockId,
-            "PROPERTY_CAV_DEALS" => $propertyValue
-        );
-        $res = \CIBlockElement::GetList(
-            array("SORT" => "ASC"),
-            $arFilter,
-            false, false, ['IBLOCK_ID', 'ID']
-        );
-        while ($ob = $res->GetNextElement()) {
-            $arFields = $ob->GetFields();
-        }
-        return $arFields['ID'];
-    }
 }
-
-
-
-
-
-

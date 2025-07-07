@@ -5,7 +5,7 @@ use Bitrix\Iblock\IblockTable;
 use Bitrix\Main\Diag\Debug;
 use Bitrix\Main\Page\Asset;
 
-\Bitrix\Main\UI\Extension::load('cab_log_events.common'); // вывод js событий
+// \Bitrix\Main\UI\Extension::load('cab_log_events.common'); // вывод js событий
 \Bitrix\Main\UI\Extension::load('cav_js_extention.lesson20'); // вывод js событий
 
 
@@ -34,10 +34,16 @@ $eventManager->addEventHandler('iblock', 'OnIBlockPropertyBuildList', ['UserType
 
 $eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", ['EventsHandlers\OnAfterIBlockElementUpdateHandler', 'OnAfterIBlockElementUpdateHandler']);
 //$eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealUpdate", ['EventsHandlers\OnAfterCrmDealUpdateHandler', 'OnAfterCrmDealUpdateHandler']);
-$eventManager->addEventHandlerCompatible("crm", "OnBeforeCrmDealUpdate", ['EventsHandlers\OnBeforeCrmDealUpdateHandler', 'OnBeforeCrmDealUpdateHandler']);
+//$eventManager->addEventHandlerCompatible("crm", "OnBeforeCrmDealUpdate", ['EventsHandlers\OnBeforeCrmDealUpdateHandler', 'OnBeforeCrmDealUpdateHandler']);
 
-
-
-
-
-
+function getIblockCodeHandler($arFieldsIblockID)
+{
+    $result = IblockTable::getList(array(
+        'filter' => ['ID' => $arFieldsIblockID],
+        'select' => ['CODE']
+    ));
+    if ($iblock = $result->fetch()) {
+        $iblockCode = $iblock['CODE'];
+    }
+    return $iblockCode;
+}

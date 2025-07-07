@@ -12,59 +12,51 @@ class OnBeforeCrmDealUpdateHandler
 {
     public static function OnBeforeCrmDealUpdateHandler(&$arFields)
     {
+        // get измененные значения
+        $dealId = $arFields['ID'];
+        $BLOCK_ID = 16;
 
-        Debug::dumpToFile($arFields, 'BeforeCrmDealUpdateHandler', 'arFields.log');
+        Debug::dumpToFile($arFields, '$arFields ' . date('d-m-Y; H:i:s'));
 
-        $dealId = (string)$arFields ["ID"];
-       // $dealASSIGNEDId = $arFields["ASSIGNED_BY_ID"]; // Ответственный в сделке и CRM
-        $dealSumm = (string)$arFields["OPPORTUNITY"]; // Сумма в сделке и CRM
+        if ($arFields["OPPORTUNITY"] && $arFields["OPPORTUNITY"] != '') {
+            $strDealSumma = $arFields["OPPORTUNITY"];
+        } else {
+            $factory = Container::getInstance()->getFactory(\CCrmOwnerType::Deal);
+            $getCurrDealRes['dealId'] = $item = $factory->getItem((int)$dealId);
 
-        $arrCurrDealVal = static::getCurrDeal($dealId);
-        if ($arFields["ASSIGNED_BY_ID"]!=''){
-            $dealASSIGNEDId = $arFields["ASSIGNED_BY_ID"];
-        }else{
-            $dealASSIGNEDId =  $arrCurrDealVal['AssignedById'];
+            $strDealSumma = $item->get("OPPORTUNITY");
+
+
         }
-        if ($arFields["OPPORTUNITY"]!=''){
-            $dealSumm = (string)$arFields["OPPORTUNITY"];
-        }else{
-            $dealSumm =  $arrCurrDealVal['OPPORTUNITY'];
+        if ($arFields["ASSIGNED_BY_ID"] && $arFields["ASSIGNED_BY_ID"] != '') {
+            $strDealOtvetctvenniy = $arFields["ASSIGNED_BY_ID"];
         }
 
-        $elId = OnAfterCrmDealUpdateHandler::getIblockElId(16, $dealId);
-
-        $sqlQuery = " UPDATE b_iblock_element_prop_s16 SET PROPERTY_71 =  '" . $dealSumm . "', PROPERTY_72 = '" . $dealASSIGNEDId . "' WHERE IBLOCK_ELEMENT_ID = '" . $elId . "'";
-
-        $connection = \Bitrix\Main\Application::getConnection();
-        $connection->queryExecute($sqlQuery);
-    }
-
-    public static function getIblockElId($iblockId, $propertyValue)
-    {
         $arFilter = array(
-            "IBLOCK_ID" => $iblockId,
-            "PROPERTY_CAV_DEALS" => $propertyValue
+            "IBLOCK_ID" => $BLOCK_ID,
+            "PROPERTY_DEAL" => $dealId,
+            //"PROPERTY_SD" => $dealId,
         );
+// получить id элемента заказа по свойству Сделка 74 -SD , cust70 DEAL
+
         $res = \CIBlockElement::GetList(
             array("SORT" => "ASC"),
             $arFilter,
             false, false, ['IBLOCK_ID', 'ID']
         );
+
         while ($ob = $res->GetNextElement()) {
-            $arFields = $ob->GetFields();
+            $arElFields = $ob->GetFields();
         }
-        return $arFields['ID'];
-    }
-    public static function getCurrDeal($dealId)
-    {
-        $getCurrDealRes = [];
 
-        $factory = Container::getInstance()->getFactory(\CCrmOwnerType::Deal);
-        $getCurrDealRes['dealId'] = $item = $factory->getItem((int)$dealId);
-        $getCurrDealRes['AssignedById'] = $item->getAssignedById();
-        $getCurrDealRes['OPPORTUNITY'] = $item->get("OPPORTUNITY");
+        $iElId = (int)$arElFields['ID'];
 
-        return $getCurrDealRes;
+
+
+        $sqlQuery = " UPDATE b_iblock_element_prop_s18 SET PROPERTY_70 = '" . $dealId . "', PROPERTY_71 =  '" . $strDealSumma . "', PROPERTY_72 = '" . $strDealOtvetctvenniy . "' WHERE IBLOCK_ELEMENT_ID = '" . $iElId . "'";
+
+        $connection = \Bitrix\Main\Application::getConnection();
+        $connection->queryExecute($sqlQuery);
 
     }
 }
