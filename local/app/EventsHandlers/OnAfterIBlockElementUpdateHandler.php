@@ -19,34 +19,37 @@ class OnAfterIBlockElementUpdateHandler
      */
     public static function OnAfterIBlockElementUpdateHandler(&$arFields)
     {
-        Debug::dumpToFile($arFields, '$arFields ' . date('d-m-Y; H:i:s'));
-        if ( Loader::includeModule('crm')) {
-            $arFieldsIblockID = $arFields['IBLOCK_ID'];
-            $iblockCode = getIblockCodeHandler($arFieldsIblockID);
-            $iblockCodeOpt = 'request';
-
-            if ($iblockCode && $iblockCode == $iblockCodeOpt) {
-
-                $dealId = (int)$arFields["PROPERTY_VALUES"][70]["34:70"]["VALUE"];
-
-                $strDealSumma =$arFields["PROPERTY_VALUES"][71]["34:71"]["VALUE"];// Сумма
+        $intElementID = $arFields['ID'];
 
 
-                $dealFactory = Container::getInstance()->getFactory(\CCrmOwnerType::Deal);
-                $newDealItem = $dealFactory->getItem($dealId);
+        if ($intElementID) {
+            Loader::includeModule('crm');
 
+            $dealId = (int)$arFields["PROPERTY_VALUES"][70][$intElementID . ":70"]["VALUE"];
+            $strDealSumma = $OPPORTUNITY = explode('|', $arFields["PROPERTY_VALUES"][71][$intElementID . ":71"]["VALUE"])[0];// Сумма
 
-                //Debug::dumpToFile($strDealSumma, '$strDealSumma ' . date('d-m-Y; H:i:s'));
-
-
-                if (is_array($arFields["PROPERTY_VALUES"][71]["34:71"])) { // Сумма сделки
-                    $newDealItem->set('OPPORTUNITY', (int)$arFields["PROPERTY_VALUES"][71]["34:71"]["VALUE"]);
-                }
-                $newDealItem->set("ASSIGNED_BY_ID", $arFields["PROPERTY_VALUES"][72]["34:72"]["VALUE"]);// ответственный
-                $dealUpdateOperation = $dealFactory->getUpdateOperation($newDealItem);
-                $addResult = $dealUpdateOperation->launch();
+            if ($arFields["PROPERTY_VALUES"][72] != null) {
+                $ASSIGNED_BY_ID = $arFields["PROPERTY_VALUES"][72];
             }
-        }
-    }
 
+
+            $dealFactory = Container::getInstance()->getFactory(\CCrmOwnerType::Deal);
+            $newDealItem = $dealFactory->getItem($dealId);
+
+            if (is_array($arFields["PROPERTY_VALUES"][71][$intElementID . ":71"]) && $OPPORTUNITY != null) { // Сумма сделки
+                //$newDealItem->set('OPPORTUNITY', $OPPORTUNITY);
+                $newDealItem->setOpportunity($OPPORTUNITY);
+            }
+
+
+            if ($ASSIGNED_BY_ID) {
+                $newDealItem->set("ASSIGNED_BY_ID", $ASSIGNED_BY_ID);// ответственный
+
+                Debug::dumpToFile($arFields, '$arFields ' . date('d-m-Y; H:i:s'));
+                Debug::writeToFile($ASSIGNED_BY_ID, '$ASSIGNED_BY_ID' . date('d-m-Y; H:i:s'));
+            }
+            $newDealItem->save();
+        }
+
+    }
 }

@@ -16,7 +16,7 @@ class OnBeforeCrmDealUpdateHandler
         $dealId = $arFields['ID'];
         $BLOCK_ID = 16;
 
-        Debug::dumpToFile($arFields, '$arFields ' . date('d-m-Y; H:i:s'));
+        Debug::dumpToFile($arFields, '$arFields OnBeforeCrmDealUpdateHandler ' . date('d-m-Y; H:i:s'));
 
         if ($arFields["OPPORTUNITY"] && $arFields["OPPORTUNITY"] != '') {
             $strDealSumma = $arFields["OPPORTUNITY"];
@@ -53,7 +53,7 @@ class OnBeforeCrmDealUpdateHandler
 
 
 
-        $sqlQuery = " UPDATE b_iblock_element_prop_s18 SET PROPERTY_70 = '" . $dealId . "', PROPERTY_71 =  '" . $strDealSumma . "', PROPERTY_72 = '" . $strDealOtvetctvenniy . "' WHERE IBLOCK_ELEMENT_ID = '" . $iElId . "'";
+        $sqlQuery = ' UPDATE b_iblock_element_prop_s' . $BLOCK_ID . ' SET PROPERTY_70 = ' . $dealId . ', PROPERTY_71 =  ' . $strDealSumma . ', PROPERTY_72 = ' . $strDealOtvetctvenniy . ' WHERE IBLOCK_ELEMENT_ID = ' . $iElId ;
 
         $connection = \Bitrix\Main\Application::getConnection();
         $connection->queryExecute($sqlQuery);

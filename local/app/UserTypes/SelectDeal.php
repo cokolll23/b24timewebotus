@@ -104,8 +104,7 @@ class SelectDeal
      * @param array $arValue Property value data.
      * @param array $strHTMLControlName Html input data.
      * @return string
-     */
-    public static function getPublicEditHtml(array $arProperty, array $arValue, array $strHTMLControlName): string
+     */public static function getPublicEditHtml(array $arProperty, array $arValue, array $strHTMLControlName): string
     {
         $strID = preg_replace('/[^a-zA-Z0-9_]/i', 'x', $strHTMLControlName["VALUE"]);
         $value = htmlspecialcharsbx(trim($arValue['VALUE']));
@@ -133,7 +132,6 @@ class SelectDeal
 
         return $html;
     }
-
     public static function getOptionsCrmDealsHtml()
     {
 
