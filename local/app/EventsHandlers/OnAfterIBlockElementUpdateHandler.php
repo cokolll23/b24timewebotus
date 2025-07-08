@@ -44,9 +44,6 @@ class OnAfterIBlockElementUpdateHandler
 
             if ($ASSIGNED_BY_ID) {
                 $newDealItem->set("ASSIGNED_BY_ID", $ASSIGNED_BY_ID);// ответственный
-
-                Debug::dumpToFile($arFields, '$arFields ' . date('d-m-Y; H:i:s'));
-                Debug::writeToFile($ASSIGNED_BY_ID, '$ASSIGNED_BY_ID' . date('d-m-Y; H:i:s'));
             }
             $newDealItem->save();
         }

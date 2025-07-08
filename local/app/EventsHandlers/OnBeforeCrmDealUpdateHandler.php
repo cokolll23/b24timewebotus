@@ -51,10 +51,7 @@ class OnBeforeCrmDealUpdateHandler
 
         $iElId = (int)$arElFields['ID'];
 
-
-
-        $sqlQuery = ' UPDATE b_iblock_element_prop_s' . $BLOCK_ID . ' SET PROPERTY_70 = ' . $dealId . ', PROPERTY_71 =  ' . $strDealSumma . ', PROPERTY_72 = ' . $strDealOtvetctvenniy . ' WHERE IBLOCK_ELEMENT_ID = ' . $iElId ;
-
+        $sqlQuery = ' UPDATE b_iblock_element_prop_s' . $BLOCK_ID . ' SET PROPERTY_70 = ' . $dealId . ', PROPERTY_71 =  ' . $strDealSumma . ', PROPERTY_72 = ' . $strDealOtvetctvenniy . ' WHERE PROPERTY_70 = ' . $dealId ;
         $connection = \Bitrix\Main\Application::getConnection();
         $connection->queryExecute($sqlQuery);
 
