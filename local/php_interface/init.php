@@ -19,6 +19,12 @@ if (file_exists(__DIR__ . '/../include/functions/pretty_print.php')) {
     require_once __DIR__ . '/../include/functions/pretty_print.php';
 }
 
+// include_once __DIR__ . '/classes/BXHelper.php';
+include_once __DIR__ . '/classes/LKIblock.php';
+
+include_once __DIR__ . '/classes/Dadata.php';
+
+
 $eventManager = \Bitrix\Main\EventManager::getInstance();
 
 // после изменения записи в сделке
@@ -35,6 +41,24 @@ $eventManager->addEventHandler('iblock', 'OnIBlockPropertyBuildList', ['UserType
 $eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", ['EventsHandlers\OnAfterIBlockElementUpdateHandler', 'OnAfterIBlockElementUpdateHandler']);
 //$eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealUpdate", ['EventsHandlers\OnAfterCrmDealUpdateHandler', 'OnAfterCrmDealUpdateHandler']);
 $eventManager->addEventHandlerCompatible("crm", "OnBeforeCrmDealUpdate", ['EventsHandlers\OnBeforeCrmDealUpdateHandler', 'OnBeforeCrmDealUpdateHandler']);
+
+
+// Обработчик для изменений в контактах
+//$eventManager->AddEventHandler('crm', 'OnAfterCrmContactUpdate', [__CLASS__, 'updateFromContact']);
+
+// Обработчик для изменений в делах
+//$eventManager->AddEventHandler('crm', 'OnAfterCrmDealUpdate', [__CLASS__, 'updateFromDeal']);
+
+// Обработчик для изменений в лидах
+//$eventManager->AddEventHandler('crm', 'OnAfterCrmLeadUpdate', [__CLASS__, 'updateFromLead']);
+
+// Обработчик для добавления активности
+$eventManager->AddEventHandler('crm', 'OnActivityUpdate', ['EventsHandlers\updateFromActivity', 'updateFromActivity']);
+$eventManager->AddEventHandler('crm', 'OnActivityAdd', ['EventsHandlers\OnActivityAddHandler', 'OnActivityAddHandler']);
+//$eventManager->AddEventHandler('crm', 'OnActivityUpdate', 'updateFromActivity');
+
+// Обработчик для изменений в timeline
+//$eventManager->AddEventHandler('crm', 'OnAfterTimelineAdd', [__CLASS__, 'updateFromTimeline']);
 
 function getIblockCodeHandler($arFieldsIblockID)
 {
