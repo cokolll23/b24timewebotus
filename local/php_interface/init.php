@@ -27,11 +27,7 @@ include_once __DIR__ . '/classes/Dadata.php';
 
 $eventManager = \Bitrix\Main\EventManager::getInstance();
 
-// после изменения записи в сделке
-/*$eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealUpdate",'OnAfterCrmDealUpdateHandler');
-$eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate",'OnAfterIBlockElementUpdateHandler');
-$eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealAdd",'OnAfterCrmDealAddHandler');
-*/
+
 
 // для создания кастомных свойств
 $eventManager->addEventHandler('iblock', 'OnIBlockPropertyBuildList', ['UserTypes\SignUpForProcedure', 'GetUserTypeDescription']);
@@ -42,23 +38,52 @@ $eventManager->addEventHandler("iblock", "OnAfterIBlockElementUpdate", ['EventsH
 //$eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealUpdate", ['EventsHandlers\OnAfterCrmDealUpdateHandler', 'OnAfterCrmDealUpdateHandler']);
 $eventManager->addEventHandlerCompatible("crm", "OnBeforeCrmDealUpdate", ['EventsHandlers\OnBeforeCrmDealUpdateHandler', 'OnBeforeCrmDealUpdateHandler']);
 
-
-// Обработчик для изменений в контактах
-//$eventManager->AddEventHandler('crm', 'OnAfterCrmContactUpdate', [__CLASS__, 'updateFromContact']);
-
-// Обработчик для изменений в делах
-//$eventManager->AddEventHandler('crm', 'OnAfterCrmDealUpdate', [__CLASS__, 'updateFromDeal']);
-
-// Обработчик для изменений в лидах
-//$eventManager->AddEventHandler('crm', 'OnAfterCrmLeadUpdate', [__CLASS__, 'updateFromLead']);
+$eventManager->addEventHandlerCompatible("crm", "OnAfterCrmDealAdd", ['EventsHandlers\OnAfterCrmDealAddHandler', 'OnAfterCrmDealAddHandler']);
 
 // Обработчик для добавления активности
 $eventManager->AddEventHandler('crm', 'OnActivityUpdate', ['EventsHandlers\updateFromActivity', 'updateFromActivity']);
 $eventManager->AddEventHandler('crm', 'OnActivityAdd', ['EventsHandlers\OnActivityAddHandler', 'OnActivityAddHandler']);
 //$eventManager->AddEventHandler('crm', 'OnActivityUpdate', 'updateFromActivity');
 
-// Обработчик для изменений в timeline
-//$eventManager->AddEventHandler('crm', 'OnAfterTimelineAdd', [__CLASS__, 'updateFromTimeline']);
+// Добавить таб в карточку контакта
+$eventManager->addEventHandler('crm', 'onEntityDetailsTabsInitialized',['EventsHandlers\onEntityDetailsTabsInitializedHandler','onEntityDetailsTabsInitializedHandler']);
+//$eventManager->addEventHandler('crm', 'onEntityDetailsTabsInitialized','onEntityDetailsTabsInitializedHandler');
+
+
+function onEntityDetailsTabsInitializedHandler($event) {
+    $tabs = $event->getParameter('tabs');
+    // ID текущего элемента СРМ
+    $entityID = $event->getParameter('entityID');
+    // ID типа сущности: Сделка, Компания, Контакт и т.д.
+    $entityTypeID = $event->getParameter('entityTypeID');
+
+    // Проверяем, что открыта карточка именно Сделки
+    if($entityTypeID == \CCrmOwnerType::Contact) {
+        // Добавляем свою вкладку в массив вкладок
+        $tabs[] = [
+            'id' => 'garag',
+            'name' => 'Гараж',
+            /*'loader' => [
+                // Указываем URL адрес обработчика
+                'serviceUrl' => '/local/ajax/garage_ajax_tab.php',
+                'componentData' => [
+                    'template' => '',
+                    // Передаем массив необходимых параметров
+                    'params' => [
+                        'ENTITY_ID' => $entityID,
+                        'ENTITY_TYPE' => $entityTypeID,
+                        'TAB_ID' => 'newTab'
+                    ]
+                ]
+            ]*/
+        ];
+    }
+
+    // Возвращаем модифицированный массив вкладок
+    return new \Bitrix\Main\EventResult(\Bitrix\Main\EventResult::SUCCESS, [
+        'tabs' => $tabs,
+    ]);
+}
 
 function getIblockCodeHandler($arFieldsIblockID)
 {
